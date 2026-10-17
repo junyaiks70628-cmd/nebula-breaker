@@ -23,7 +23,13 @@ const colors=['#ff5e89','#ff9b4a','#ffd85b','#5df0a5','#43caff','#9c80ff'];
 function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);W=Math.max(200,r.width);H=Math.max(300,r.height);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);paddle.y=H-34;paddle.x=Math.max(paddle.w/2,Math.min(W-paddle.w/2,paddle.x));draw()}
 window.addEventListener('resize',resize);
 function sound(f=440,d=.05){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;g.gain.setValueAtTime(.04,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+d);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d)}catch(e){}}
-function hud(){$('stage').textContent=stage;$('score').textContent=score;$('life').textContent='♥'.repeat(Math.max(0,Math.min(5,lives)))+'♡'.repeat(Math.max(0,3-lives));$('best').textContent=best}
+function hud(){
+  $('stage').textContent=stage;
+  $('score').textContent=score;
+  const safeLives=Number.isFinite(lives)?Math.max(0,Math.min(5,Math.floor(lives))):0;
+  $('life').textContent='♥'.repeat(safeLives)+'♡'.repeat(Math.max(0,3-safeLives));
+  $('best').textContent=best;
+}
 function resetBall(){balls=[{x:paddle.x,y:paddle.y-12,vx:(Math.random()-.5)*3.2,vy:-4.2,r:6,fire:false}]}
 function build(){bricks=[];drops=[];particles=[];effects={wide:0,slow:0,fire:0};const cols=8,rows=Math.min(4+Math.floor((stage-1)/2),7),gap=5,pad=10,bw=(W-pad*2-gap*(cols-1))/cols,bh=Math.max(15,Math.min(22,H*.035));for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){if(stage>2&&Math.random()<.07)continue;bricks.push({x:pad+c*(bw+gap),y:44+r*(bh+7),w:bw,h:bh,hp:stage>2&&r<2?2:1,color:colors[(r+Math.floor(c/2))%colors.length]})}paddle.w=86;paddle.x=W/2;paddle.y=H-34;resetBall();hud();draw()}
 function show(title,desc,buttons){overlay.style.display='flex';overlay.innerHTML='<div class="panel"><h1>'+title+'</h1><div class="sub">'+desc+'</div>'+buttons.map((b,i)=>'<button class="btn '+(i?'secondary':'')+'" data-act="'+b.a+'">'+b.t+'</button>').join('')+'<div class="hint">画面を左右にスライドしてバーを動かす</div></div>';overlay.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>action(b.dataset.act)))}
