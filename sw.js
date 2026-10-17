@@ -1,4 +1,4 @@
-const CACHE = "nebula-breaker-v1";
+const CACHE = "nebula-breaker-v2";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon.svg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
